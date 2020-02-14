@@ -11,6 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".Actualizar"></activity>
+        <activity android:name=".UpdateDeleteClass" />
         <activity android:name=".Agregar" />
         <activity android:name=".Pmain">
             <intent-filter>

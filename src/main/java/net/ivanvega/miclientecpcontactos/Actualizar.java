@@ -22,7 +22,7 @@ public class Actualizar extends AppCompatActivity {
         telefono = (EditText)findViewById(R.id.tel);
         // nac = (EditText)findViewById(R.id.editText2);
         Bundle bundle=getIntent().getExtras();
-id =contacto.id;
+          id =contacto.id;
         nombre.setText(contacto.getUsuario());
         mail.setText((contacto.getEmail()));
         telefono.setText(contacto.getTel());

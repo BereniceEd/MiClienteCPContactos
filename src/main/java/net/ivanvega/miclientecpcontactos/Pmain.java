@@ -17,7 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Pmain extends AppCompatActivity {
+public class Pmain extends AppCompatActivity implements AdapterView.OnItemClickListener, View.OnClickListener{
     ListView lv;
     Contacto com;
     List<Contacto> lista=new ArrayList<>();
@@ -33,7 +33,8 @@ ImageButton ir;
         setContentView(R.layout.pmain);
 lv = findViewById(R.id.lv);
 
-
+        lv.setClickable(true);
+        lv.setOnItemClickListener(this);
 
 
 
@@ -61,6 +62,12 @@ lv = findViewById(R.id.lv);
                         SimpleCursorAdapter.IGNORE_ITEM_VIEW_TYPE
                 );
         lv.setAdapter(simpleCursorAdapter);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                posicion=position;
+            }
+        });
 
 
     }
@@ -107,6 +114,12 @@ lv = findViewById(R.id.lv);
                         SimpleCursorAdapter.IGNORE_ITEM_VIEW_TYPE
                 );
         lv.setAdapter(simpleCursorAdapter);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                posicion=position;
+            }
+        });
     }
 
     public void Ir(View view){
@@ -118,6 +131,7 @@ lv = findViewById(R.id.lv);
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        Actualizar();
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == MainActivity.RESULT_OK){
             Toast.makeText(this, "Operación realizada con éxito.", Toast.LENGTH_SHORT).show();
@@ -126,14 +140,69 @@ lv = findViewById(R.id.lv);
             Actualizar();
         }
     }
+
     public void Modificar(View view){
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                posicion=position;
+            }
+        });
         if(posicion>=0){
-            Intent intent=new Intent(getApplicationContext(),Actualizar.class);
-            intent.putExtra("_id",lista.get(posicion).getId());
-            startActivity(intent);
-        }else{
-            Toast.makeText(this,"NO ha seleccionado nada",Toast.LENGTH_LONG).show();
+            Cursor cursor = (Cursor)lv.getItemAtPosition(posicion);
+            String _id = cursor.getString( cursor.getColumnIndex("_id") );
+            Cursor c2 = getContentResolver().query(ContactosContractProvider.CONTENT_URI_CONTACTOS, ContactosContractProvider.PROJECTION_CONTACTOS, "_id=?", new String[]{_id},null);
+            Contacto contacto = null;
+            if (c2.moveToFirst()) {
+                do {
+                    contacto =
+                            new Contacto(c2.getInt(0), c2.getString(1),
+                                    c2.getString(2), c2.getString(3));
+                } while (c2.moveToNext());
+            }
+            c2.close();
+            cursor.close();
+
+            Intent intent = new Intent();
+            Bundle bundle = new Bundle();
+
+            bundle.putSerializable("contacto", contacto);
+            intent.putExtras(bundle);
+            intent.setClass(this, UpdateDeleteClass.class);
+            startActivityForResult(intent, 10);
+       }else {
+            Toast.makeText(this, "NO ha seleccionado nada", Toast.LENGTH_LONG).show();
         }
     }
 
+    @Override
+    public void onClick(View v) {
+
+    }
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if(parent == lv){
+            Cursor cursor = (Cursor)lv.getItemAtPosition(position);
+            String _id = cursor.getString( cursor.getColumnIndex("_id") );
+            Cursor c2 = getContentResolver().query(ContactosContractProvider.CONTENT_URI_CONTACTOS, ContactosContractProvider.PROJECTION_CONTACTOS, "_id=?", new String[]{_id},null);
+            Contacto contacto = null;
+            if (c2.moveToFirst()) {
+                do {
+                    contacto =
+                            new Contacto(c2.getInt(0), c2.getString(1),
+                                    c2.getString(2), c2.getString(3));
+                } while (c2.moveToNext());
+            }
+            c2.close();
+            cursor.close();
+
+            Intent intent = new Intent();
+            Bundle bundle = new Bundle();
+
+            bundle.putSerializable("contacto", contacto);
+            intent.putExtras(bundle);
+            intent.setClass(this, UpdateDeleteClass.class);
+            startActivityForResult(intent, 10);
+        }
+    }
 }
