@@ -26,7 +26,7 @@ public class Pmain extends AppCompatActivity implements AdapterView.OnItemClickL
 TextView txtNomnbre;
 ImageButton ir;
 //int cont;
-//private EditText Nombre, Mail, Tel, editText6;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
