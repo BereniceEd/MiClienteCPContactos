@@ -31,7 +31,7 @@ ImageButton ir;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.pmain);
-
+lv = findViewById(R.id.lv);
 
 
 
